@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSV上傳與顯示</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <input type="file" id="csvFileInput" accept=".csv">
+    <input type="text" id="searchInput" placeholder="輸入查詢字串">
+    <button id="searchButton">查詢</button>
+    <table id="csvTable"></table>
+
+    <script>
+        $(document).ready(function() {
+            $('#csvFileInput').on('change', function(e) {
+                var file = e.target.files[0];
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    var contents = e.target.result;
+                    var lines = contents.split('\n');
+
+                    var table = $('#csvTable');
+                    table.empty();
+
+                    for (var i = 0; i < lines.length; i++) {
+                        var row = $('<tr></tr>');
+                        var cells = lines[i].split(',');
+
+                        for (var j = 0; j < cells.length; j++) {
+                            var cell = $('<td></td>').text(cells[j]);
+                            row.append(cell);
+                        }
+
+                        table.append(row);
+                    }
+
+                    var csvString = contents.toString(); // Convert CSV file to string
+                    console.log(csvString); // Display CSV file as string
+                };
+
+                reader.readAsText(file);
+            });
+
+            $('#searchButton').on('click', function() {
+                var searchValue = $('#searchInput').val().toString(); // Convert input value to string
+                var table = $('#csvTable');
+                var rows = table.find('tr');
+
+                rows.each(function() {
+                    var cells = $(this).find('td');
+                    var found = false;
+
+                    cells.each(function() {
+                        if ($(this).text() === searchValue) {
+                            found = true;
+                            $(this).next().addClass('highlight'); // Add class to the next cell
+                            return false; // exit the loop
+                        }
+                    });
+
+                    if (!found) {
+                        $(this).removeClass('highlight');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+                 
