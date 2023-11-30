@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSV File Upload</title>
+</head>
+<body>
+    <input type="file" id="csvFile" accept=".csv">
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('csvFile').addEventListener('change', function(evt) {
+            var file = evt.target.files[0];
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var contents = e.target.result;
+                var lines = contents.split('\n');
+                var dictionary = { '1': [], '2': [], '3': [] };
+
+                // 建立三個HTML表格
+                var table1 = document.createElement('table');
+                var table2 = document.createElement('table');
+                var table3 = document.createElement('table');
+
+                for (var i = 0; i < lines.length; i++) {
+                    var fields = lines[i].split(',');
+                    var number = parseFloat(fields[1]);
+
+                    // 建立一個表格行
+                    var row = document.createElement('tr');
+
+                    // 將資料插入到表格行中
+                    for (var j = 0; j < fields.length; j++) {
+                        var cell = document.createElement(i === 0 ? 'th' : 'td');
+                        cell.textContent = fields[j];
+                        row.appendChild(cell);
+                    }
+
+                    if (number < 7) {
+                        dictionary['1'].push(fields[0]);
+                        table1.appendChild(row);
+                    } else if (number < 14) {
+                        dictionary['2'].push(fields[0]);
+                        table2.appendChild(row);
+                    } else if (number <= 20) {
+                        dictionary['3'].push(fields[0]);
+                        table3.appendChild(row);
+                    }
+                }
+
+                // 將表格插入到網頁中
+                document.getElementById('result').innerHTML = '';
+                document.getElementById('result').appendChild(table1);
+                document.getElementById('result').appendChild(table2);
+                document.getElementById('result').appendChild(table3);
+
+                // 顯示字典
+                console.log(dictionary);
+            };
+            reader.readAsText(file);
+        });
+    </script>
+</body>
+</html>
